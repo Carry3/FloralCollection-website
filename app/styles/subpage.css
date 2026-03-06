@@ -1,0 +1,212 @@
+/* ═══════════════════════════════════════════════════
+   SUBPAGE STYLES
+   ═══════════════════════════════════════════════════ */
+/* Hero */
+.subpage-hero {
+  position: relative;
+  width: 100%;
+  height:150vh; /* minimal scroll to complete hero animation */
+  min-height: 960px;
+}
+.subpage-hero-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Background container — receives clip-path animation; sits behind content */
+.subpage-hero-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.subpage-hero-image-wrapper {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: clip-path, transform;
+  perspective: 400px;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  transform: translate3d(0, 0, 0) rotateX(0deg);
+}
+.subpage-hero-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+}
+.subpage-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.50) 100%);
+}
+
+/* ── Light mode: dark overlay → white text stays readable ── */
+[data-theme='light'] .subpage-hero-overlay {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.48) 100%);
+}
+
+/* ── Dark mode: deeper dark overlay → white text stays readable ── */
+[data-theme='dark'] .subpage-hero-overlay {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.60) 100%);
+}
+
+/* ── Overline: always gold ── */
+.subpage-hero-content .overline {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-12);
+}
+
+.subpage-hero-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0 var(--space-80) var(--space-64);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.subpage-hero-title-wrap {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-20);
+  margin-bottom: var(--space-12);
+}
+.subpage-hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(64px, 8vw, 120px);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--text-on-image);
+  letter-spacing: 0.02em;
+}
+
+/* ── Subtitle: always white over the dark overlay ── */
+.subpage-hero-subtitle {
+  font-size: clamp(14px, 1.2vw, 16px);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+/* ── Dark mode: force white on title & subtitle, overriding any GSAP inline style ── */
+[data-theme='dark'] .subpage-hero-title,
+[data-theme='dark'] .subpage-hero-subtitle {
+  color: #ffffff !important;
+}
+
+/* Alternating sections */
+.subpage-section {
+  padding: var(--space-96) var(--space-80);
+  scroll-margin-top: 96px; /* 固定导航高度，点击标签滚动时不被遮挡 */
+}
+.subpage-section.alt {
+  background: var(--bg-secondary);
+}
+.subpage-section-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-64);
+  align-items: center;
+}
+.subpage-section-inner.reverse {
+  direction: rtl;
+}
+.subpage-section-inner.reverse > * {
+  direction: ltr;
+}
+
+.subpage-section-text .overline {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent-text-safe);
+  margin-bottom: var(--space-16);
+  display: block;
+}
+.subpage-section-text h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 600;
+  line-height: 1.22;
+  color: var(--text-primary);
+  margin-bottom: var(--space-20);
+}
+.subpage-section-text p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-16);
+}
+.btn-text {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--accent-text-safe);
+  margin-top: var(--space-8);
+  transition:
+    gap 0.3s,
+    color 0.3s;
+}
+.btn-text:hover {
+  color: var(--accent);
+  gap: var(--space-12);
+}
+.btn-text svg {
+  transition: transform 0.3s;
+}
+.btn-text:hover svg {
+  transform: translateX(4px);
+}
+
+.subpage-section-img img {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  aspect-ratio: 4/3;
+  object-fit: cover;
+}
+
+@media (max-width: 1024px) {
+  .subpage-section {
+    padding: var(--space-64) var(--space-40);
+  }
+  .subpage-section-inner {
+    gap: var(--space-40);
+  }
+  .subpage-hero-content {
+    padding: 0 var(--space-40) var(--space-48);
+  }
+}
+@media (max-width: 768px) {
+  .subpage-section {
+    padding: var(--space-48) var(--space-24);
+  }
+  .subpage-section-inner,
+  .subpage-section-inner.reverse {
+    grid-template-columns: 1fr;
+    direction: ltr;
+  }
+  .subpage-hero-content {
+    padding: 0 var(--space-24) var(--space-40);
+  }
+}
+

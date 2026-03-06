@@ -1,0 +1,599 @@
+/* ═══════════════════════════════════════════════════
+   SERVICES INTRO
+   ═══════════════════════════════════════════════════ */
+.services-intro {
+  padding: var(--space-128) var(--space-80) var(--space-96);
+  max-width: 1440px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.services-intro .overline {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent-text-safe);
+  margin-bottom: var(--space-24);
+}
+
+.services-intro h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(26px, 3.5vw, 36px);
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+  max-width: 700px;
+  margin: 0 auto var(--space-24);
+}
+
+.services-intro p {
+  font-size: clamp(16px, 1.3vw, 18px);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* Quick Facts Bar */
+.quick-facts {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-64);
+  margin-top: var(--space-64);
+  padding-top: var(--space-48);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.quick-fact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.quick-fact-number {
+  font-family: var(--font-mono);
+  font-size: clamp(28px, 3vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+  line-height: 1.2;
+}
+
+.quick-fact-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-top: var(--space-4);
+}
+
+/* ═══════════════════════════════════════════════════
+   3-COLUMN SERVICE SECTIONS
+   ═══════════════════════════════════════════════════ */
+.service-groups-container {
+  position: relative;
+}
+
+.service-group {
+  position: sticky;
+  top: 72px;
+  z-index: 1;
+  will-change: transform;
+}
+.service-group:nth-child(1) {
+  z-index: 1;
+}
+.service-group:nth-child(2) {
+  z-index: 2;
+}
+.service-group:nth-child(3) {
+  z-index: 3;
+}
+.service-group:nth-child(4) {
+  z-index: 4;
+}
+
+/* Shadow on top edge to sell the layering illusion */
+.service-group:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, transparent 100%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.service-columns {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 72px);
+  position: relative;
+  /* removing flex gap since we are managing spacing inside the columns themselves */
+}
+
+/* ScrollReveal wraps each col — make the .reveal wrapper the actual flex item */
+.service-columns > .reveal {
+  flex: 1 1 33.333%;
+  min-width: 0;
+}
+
+.service-col {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--bg-primary);
+}
+
+.service-col-bg {
+  position: absolute;
+  /* Instead of uniform inset, we use regular padding of the grid or margins, 
+     but to achieve "left/right stick to edges, space in middle":
+     The gap is handled by the parent `.service-columns` using `gap`.
+     So inset here is 0, but we apply the scale transform for the scroll effect. */
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  transform: scale(var(--col-scale, 1));
+  transform-origin: top center;
+  /* Make sure the scaling transition merges smoothly with hover */
+  transition: transform 0.1s linear, inset 0.6s var(--ease-luxury);
+}
+
+/* Custom Spacing logic per user request */
+/* Left Column: flush left edge. Gap exists on its right side taking up 2/3 of the white space limit */
+.service-columns > .reveal:nth-child(1) .service-col-bg,
+.service-columns > .reveal:nth-child(1) .service-col-overlay,
+.service-columns > .reveal:nth-child(1) .service-col-content {
+  inset: 0 16px 0 0; 
+}
+/* Middle Column: 1/3 gap left, 1/3 gap right */
+.service-columns > .reveal:nth-child(2) .service-col-bg,
+.service-columns > .reveal:nth-child(2) .service-col-overlay,
+.service-columns > .reveal:nth-child(2) .service-col-content {
+  inset: 0 8px 0 8px; 
+}
+/* Right Column: 2/3 gap left, flush right edge */
+.service-columns > .reveal:nth-child(3) .service-col-bg,
+.service-columns > .reveal:nth-child(3) .service-col-overlay,
+.service-columns > .reveal:nth-child(3) .service-col-content {
+  inset: 0 0 0 16px; 
+}
+
+/* On hover, fill the respective gaps back up to 0 */
+.service-col:hover .service-col-bg,
+.service-col:hover .service-col-overlay,
+.service-col:hover .service-col-content {
+  inset: 0 !important;
+}
+
+.service-col-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* By removing the transform scale on hover here, the image won't overflow its container boundaries */
+.service-col:hover .service-col-bg img {
+  transform: scale(1.0);
+}
+
+.service-col-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.45) 100%);
+  z-index: 1;
+  transform: scale(var(--col-scale, 1));
+  transform-origin: top center;
+  transition: background 0.5s, transform 0.1s linear, inset 0.6s var(--ease-luxury);
+}
+.service-col:hover .service-col-overlay {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.7) 100%);
+}
+
+.service-col-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: var(--space-32);
+  z-index: 2;
+  transform: scale(var(--col-scale, 1));
+  transform-origin: top center;
+  transition: transform 0.1s linear, inset 0.6s var(--ease-luxury);
+}
+
+.service-col-overline {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-12);
+}
+
+.service-col-title {
+  font-family: var(--font-heading);
+  font-size: clamp(20px, 2.2vw, 32px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-on-image);
+  margin-bottom: var(--space-16);
+}
+
+.service-col-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.8);
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.5s var(--ease-luxury);
+  margin-bottom: 0;
+}
+.service-col:hover .service-col-desc {
+  max-height: 200px;
+  opacity: 1;
+  transform: translateY(0);
+  margin-bottom: var(--space-20);
+}
+
+.service-col-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-on-image);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.5s 0.1s var(--ease-luxury);
+}
+.service-col:hover .service-col-cta {
+  opacity: 1;
+  transform: translateY(0);
+}
+.service-col-cta:hover {
+  color: var(--accent);
+}
+.service-col-cta svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s;
+}
+.service-col-cta:hover svg {
+  transform: translateX(4px);
+}
+
+/* (divider removed — groups now overlap directly) */
+
+/* ═══════════════════════════════════════════════════
+   PACKAGE COLUMNS — 4 full-page columns (Essential, Plus, Luxe, Elite)
+   ═══════════════════════════════════════════════════ */
+.package-columns-section {
+  position: relative;
+}
+
+.package-columns {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 72px);
+  min-height: 400px;
+}
+
+.package-col-link {
+  flex: 1 1 25%;
+  min-width: 0;
+  display: block;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+  transition: flex 0.6s var(--ease-luxury);
+}
+
+.package-col-link:hover {
+  flex: 1 1 35%;
+}
+
+.package-columns .service-col-bg,
+.package-columns .service-col-overlay,
+.package-columns .service-col-content {
+  inset: 0 8px 0 8px;
+  transition: inset 0.6s var(--ease-luxury);
+}
+
+.package-col-link:hover .service-col-bg,
+.package-col-link:hover .service-col-overlay,
+.package-col-link:hover .service-col-content {
+  inset: 0 !important;
+}
+
+.package-columns .service-col-bg {
+  transform: none;
+}
+
+/* ═══════════════════════════════════════════════════
+   SERVICES RESIDENTIAL — 12-panel scroll
+   ═══════════════════════════════════════════════════ */
+/* Residential section: anchor for nav */
+#residential {
+  scroll-margin-top: 96px;
+}
+
+.services-residential-scroll {
+  display: block;
+  scroll-snap-type: y mandatory;
+  overflow-y: auto;
+  height: auto;
+}
+
+.services-residential-scroll[data-reduced-motion="true"] {
+  scroll-snap-type: none;
+}
+
+.services-residential-panel {
+  min-height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  padding: var(--space-80);
+}
+
+.services-residential-panel-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-48);
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.services-residential-panel-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.services-residential-panel-title {
+  font-family: var(--font-heading);
+  font-size: clamp(22px, 2.5vw, 32px);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-24);
+}
+
+.services-residential-panel-desc {
+  font-size: clamp(16px, 1.1vw, 18px);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.services-residential-panel-img {
+  position: relative;
+  aspect-ratio: 4/3;
+  border-radius: var(--radius-lg, 12px);
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+
+@media (max-width: 768px) {
+  .services-residential-panel-inner {
+    grid-template-columns: 1fr;
+    gap: var(--space-32);
+  }
+  .services-residential-panel-img {
+    aspect-ratio: 16/10;
+    order: -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .services-residential-scroll {
+    scroll-snap-type: none;
+  }
+  .services-residential-panel {
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   SERVICES GUARANTEES — 4-card spiral
+   ═══════════════════════════════════════════════════ */
+.services-guarantees {
+  padding: var(--space-96) var(--space-80);
+  background: var(--bg-primary);
+  scroll-margin-top: 96px;
+}
+
+.services-guarantees-heading {
+  font-family: var(--font-heading);
+  font-size: clamp(28px, 3vw, 36px);
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-48);
+}
+
+.services-guarantees-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-32);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.services-guarantees-grid.reduced-motion .services-guarantee-card {
+  transform: none;
+  opacity: 1;
+}
+
+.services-guarantee-card {
+  background: var(--bg-elevated, #f5f5f5);
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.08));
+  border-radius: 12px;
+  padding: 32px;
+}
+
+[data-theme="dark"] .services-guarantee-card {
+  background: #1C1C2E;
+}
+
+.services-guarantee-card-icon {
+  color: var(--accent);
+  margin-bottom: var(--space-16);
+}
+
+.services-guarantee-card-icon svg {
+  display: block;
+}
+
+.services-guarantee-card-title {
+  font-family: var(--font-heading);
+  font-size: clamp(22px, 2.2vw, 28px);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-12);
+}
+
+.services-guarantee-card-desc {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .services-guarantees-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   SERVICES FREE ANALYSIS — 60/40 + CTA/form
+   ═══════════════════════════════════════════════════ */
+.services-free-analysis {
+  padding: var(--space-96) var(--space-80);
+  background: var(--bg-primary);
+  background-image: linear-gradient(180deg, var(--bg-primary) 0%, rgba(255, 248, 240, 0.4) 100%);
+  scroll-margin-top: 96px;
+}
+
+[data-theme="dark"] .services-free-analysis {
+  background-image: linear-gradient(180deg, var(--bg-primary) 0%, rgba(30, 28, 40, 0.6) 100%);
+}
+
+.services-free-analysis-inner {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--space-64);
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+.services-free-analysis-text h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(28px, 2.8vw, 36px);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-24);
+}
+
+.services-free-analysis-text p {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-32);
+}
+
+.services-free-analysis-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.services-free-analysis-form-wrap {
+  background: var(--bg-elevated, #fafafa);
+  border-radius: var(--radius-lg, 12px);
+  padding: var(--space-32);
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.06));
+}
+
+[data-theme="dark"] .services-free-analysis-form-wrap {
+  background: var(--bg-elevated);
+}
+
+.services-free-analysis-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+}
+
+.services-free-analysis-label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.services-free-analysis-label .required {
+  color: var(--accent);
+}
+
+.services-free-analysis-input {
+  padding: var(--space-12) var(--space-16);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md, 8px);
+  font-size: 16px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.services-free-analysis-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.services-free-analysis-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.services-free-analysis-submit {
+  margin-top: var(--space-8);
+  width: 100%;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .services-free-analysis-inner {
+    grid-template-columns: 1fr;
+  }
+  .services-free-analysis-text {
+    order: 1;
+  }
+  .services-free-analysis-form-wrap {
+    order: 2;
+  }
+}
+

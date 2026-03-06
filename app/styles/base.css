@@ -1,0 +1,56 @@
+/* ═══════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════ */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #000000;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.625;
+  overflow-x: hidden;
+  min-height: 100vh;
+  transition:
+    background-color 0.5s var(--ease-smooth),
+    color 0.5s var(--ease-smooth);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Prevent global img reset from breaking Google Maps marker icons.
+   Legacy Marker renders icon as <img> inside .gm-style — height:auto and
+   max-width:100% squish/collapse the icon, making it appear as a black dot. */
+.gm-style img {
+  display: inline;
+  max-width: none;
+  height: unset;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+

@@ -1,0 +1,131 @@
+/* ═══════════════════════════════════════════════════
+   PAGE VIEW SYSTEM
+   ═══════════════════════════════════════════════════ */
+.page-view {
+  display: none;
+}
+.page-view.active {
+  display: block;
+  animation: pageIn 0.6s var(--ease-luxury);
+}
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   HEADER SUB-NAV (below logo on sub-pages)
+   ═══════════════════════════════════════════════════ */
+.header-sub-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+}
+.header-sub-nav.visible {
+  display: flex;
+}
+
+.header-sub-nav-title {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  padding-right: var(--space-16);
+  border-right: 1px solid var(--border-subtle);
+  margin-right: var(--space-8);
+}
+.header.on-dark .header-sub-nav-title {
+  color: var(--text-on-image);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+.header.scrolled .header-sub-nav-title {
+  border-color: var(--border-subtle);
+}
+
+.header-sub-nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.header-sub-nav-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+/* 用伪元素预留加粗后的宽度，避免高亮时文字左右移动 */
+.header-sub-nav-tab {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  padding: var(--space-8) var(--space-2) 0;
+  position: relative;
+  transition: color 0.25s;
+  cursor: pointer;
+  display: inline-block;
+}
+.header-sub-nav-tab::before {
+  content: attr(data-label);
+  font-weight: 500;
+  display: block;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+.header.on-dark .header-sub-nav-tab {
+  color: rgba(255, 255, 255, 0.5);
+}
+.header-sub-nav-tab:hover {
+  color: var(--text-primary);
+}
+.header.on-dark .header-sub-nav-tab:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+.header-sub-nav-tab.active {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+.header.on-dark .header-sub-nav-tab.active {
+  color: #fff;
+}
+
+.header-sub-nav-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.3s var(--ease-luxury);
+}
+.header-sub-nav-tab.active::after {
+  transform: scaleX(1);
+}
+
+.header-brand.hidden {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .header-sub-nav-title {
+    display: none;
+  }
+  .header-sub-nav-tabs {
+    gap: var(--space-12);
+  }
+  .header-sub-nav-tab {
+    font-size: 12px;
+  }
+}
+

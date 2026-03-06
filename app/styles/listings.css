@@ -1,0 +1,459 @@
+/* ═══════════════════════════════════════════════════
+   LISTINGS SECTION — two-column split layout
+   Left: sticky panel with internal scroll | Right: map card centered in viewport
+   ═══════════════════════════════════════════════════ */
+.listings-section {
+  display: grid;
+  grid-template-columns: 480px 1fr;
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+/* ── Left column: sticky, full viewport height, clips children ── */
+.listings-list-col {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-subtle);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+}
+
+.listings-list-header {
+  padding: var(--space-40) var(--space-32) var(--space-24);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  background: var(--bg-primary);
+}
+
+.listings-list-header .overline {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent-text-safe);
+  display: block;
+  margin-bottom: var(--space-8);
+}
+
+.listings-list-header h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(22px, 2vw, 28px);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.listings-count {
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+.listings-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-16) var(--space-24) var(--space-32);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  align-content: start;
+  gap: var(--space-16);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle) transparent;
+}
+
+.listings-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.listings-list::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 2px;
+}
+
+/* ── Rental card ── */
+.rental-card {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  /* No overflow:hidden here — it would clip the expanding detail in combination
+     with transform. Rounded-corner clipping is handled by rental-card-img instead. */
+  background: var(--bg-primary);
+  cursor: pointer;
+  transition:
+    border-color 0.25s,
+    box-shadow 0.25s,
+    transform 0.25s;
+}
+
+.rental-card:hover,
+.rental-card.active {
+  border-color: var(--accent);
+  box-shadow: 0 4px 20px rgba(201, 169, 110, 0.12);
+  transform: translateY(-2px);
+}
+
+.rental-card-img {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  /* Clip image to the card's top rounded corners */
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.rental-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease-luxury);
+}
+
+.rental-card:hover .rental-card-img img {
+  transform: scale(1.04);
+}
+
+.rental-available {
+  position: absolute;
+  top: var(--space-12);
+  left: var(--space-12);
+  background: var(--accent);
+  color: var(--bg-primary);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.rental-card-body {
+  padding: var(--space-16) var(--space-20);
+}
+
+.rental-card-summary {
+  /* Always visible; detail toggles below */
+}
+
+.rental-card-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  flex-shrink: 0;
+}
+
+.rental-card-chevron {
+  display: inline-flex;
+  color: var(--text-tertiary);
+  transition: transform 0.25s var(--ease-smooth);
+}
+
+.rental-card.expanded .rental-card-chevron {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+.rental-card-detail {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s var(--ease-smooth), opacity 0.3s ease;
+}
+
+.rental-card-detail.is-open {
+  /* Large enough for description + tags + CTA with room to spare */
+  max-height: 600px;
+  opacity: 1;
+}
+
+.rental-card-detail .rental-description {
+  padding-top: var(--space-12);
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 0;
+}
+
+.rental-description {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--space-12);
+}
+
+.rental-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-12);
+  margin-bottom: var(--space-12);
+}
+
+.rental-card-info {
+  min-width: 0;
+}
+
+.rental-name {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+  margin-bottom: var(--space-4);
+}
+
+.rental-address {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: var(--space-2);
+}
+
+.rental-neighborhood {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.rental-price {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.price-amount {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+  display: block;
+  line-height: 1;
+}
+
+.price-unit {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.rental-specs {
+  display: flex;
+  gap: var(--space-16);
+  margin-bottom: var(--space-12);
+}
+
+.rental-specs span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.rental-specs svg {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.rental-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  margin-bottom: var(--space-12);
+  padding-top: 0;
+}
+
+.rental-tag {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.rental-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--accent-text-safe);
+  transition:
+    gap 0.25s,
+    color 0.25s;
+}
+
+.rental-cta:hover {
+  gap: var(--space-10);
+  color: var(--accent);
+}
+
+.rental-cta svg {
+  transition: transform 0.25s;
+}
+
+.rental-cta:hover svg {
+  transform: translateX(3px);
+}
+
+/* ── Right column: map card centered in viewport (30px gap) ── */
+.listings-map-col {
+  position: relative;
+  padding: 30px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.listings-map-card {
+  position: sticky;
+  /* Center card vertically in viewport (second column) */
+  top: calc(50vh - (100vh - var(--header-height) - 60px) / 2);
+  height: calc(100vh - var(--header-height) - 60px);
+  width: 100%;
+  max-width: 100%;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow-md);
+}
+
+.listings-map-inner {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.listings-map-embed {
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+}
+
+.listings-map-fallback {
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-24);
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 14px;
+}
+
+.listings-map-fallback code {
+  background: var(--bg-primary);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+
+/* ── Rental card CTA row (View Details + Schedule Viewing) ── */
+.rental-cta-row {
+  display: flex;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+}
+
+.rental-cta-outline {
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: var(--space-6) var(--space-12);
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.rental-cta-outline:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ═══════════════════════════════════════════════════
+   TABLET & MOBILE CARD LAYOUT (≤ 1024px)
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  /* Tighter list header */
+  .listings-list-header {
+    padding: var(--space-20) var(--space-20) var(--space-16);
+  }
+
+  .listings-list-header h2 {
+    font-size: 24px;
+    margin-bottom: var(--space-2);
+  }
+
+  .listings-list {
+    padding: var(--space-16);
+    gap: var(--space-16);
+  }
+
+  /* No hover lift on touch screens */
+  @media (hover: none) {
+    .rental-card:hover,
+    .rental-card.active {
+      transform: none;
+    }
+  }
+
+  /* Image: slightly taller aspect ratio for mobile */
+  .rental-card-img {
+    aspect-ratio: 3 / 2;
+  }
+
+  /* Body: refine padding for mobile */
+  .rental-card-body {
+    padding: var(--space-16);
+  }
+
+  .rental-card-top {
+    margin-bottom: var(--space-12);
+  }
+
+  .rental-name {
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+
+  .rental-address {
+    font-size: 13px;
+  }
+
+  .rental-neighborhood {
+    font-size: 11px;
+  }
+
+  .price-amount {
+    font-size: 18px;
+  }
+
+  /* CTA buttons: side-by-side if possible, else stacked gracefully */
+  .rental-cta-row {
+    flex-direction: row;
+    gap: var(--space-8);
+  }
+
+  .rental-cta,
+  .rental-cta-outline {
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-8) var(--space-12);
+  }
+}
+
+@media (max-width: 768px) {
+  .listings-list {
+    grid-template-columns: 1fr;
+  }
+}
+

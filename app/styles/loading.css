@@ -1,0 +1,108 @@
+/* ═══════════════════════════════════════════════════
+   LOADING OVERLAY + HEADER LOADING STATE
+   ═══════════════════════════════════════════════════ */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: var(--bg-brand);
+  transition: opacity 0.9s var(--ease-smooth);
+  pointer-events: none;
+}
+.loading-overlay.hidden {
+  opacity: 0;
+}
+
+/* Header in loading state: brand is centered + enlarged; left/right areas hidden */
+.header.loading-active {
+  opacity: 1;
+  transform: none;
+  z-index: 9999;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: none !important;
+  --loading-viewport-height: 36px; /* same height for logo and text viewports */
+}
+.header.loading-active .header-left,
+.header.loading-active .header-right {
+  opacity: 0;
+  pointer-events: none;
+}
+/* Left/right areas fade in after loading finishes */
+.header:not(.loading-active) .header-left,
+.header:not(.loading-active) .header-right {
+  transition: opacity 0.5s ease 0.3s;
+}
+/* Brand: position is set via JS to exact screen center; CSS only handles non-layout props */
+.header.loading-active .header-brand {
+  transition: none;
+  color: var(--text-on-image);
+  opacity: 1;
+  will-change: transform;
+  pointer-events: none;
+}
+.header.loading-active .header-sub-nav {
+  display: none !important;
+}
+.header.loading-active .header-brand-text {
+  color: inherit;
+}
+
+/* Logo: viewport masks top/bottom, strip scrolls up — 6 loops, hold at start then fast→slow */
+.header-brand-logo-viewport {
+  display: flex;
+  align-items: center;
+  overflow: visible;
+}
+.header-brand-logo-strip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.header-brand-logo-strip .header-brand-logo:nth-child(n + 2) {
+  display: none;
+}
+.header.loading-active .header-brand-logo-viewport {
+  overflow: hidden;
+  height: var(--loading-viewport-height);
+  width: var(--loading-viewport-height);
+  display: block;
+}
+.header.loading-active .header-brand-logo-strip .header-brand-logo:nth-child(n + 2) {
+  display: block;
+}
+.header.loading-active .header-brand-logo-strip {
+  animation: logoScrollUp 1.8s ease-out 1 both;
+}
+@keyframes logoScrollUp {
+  0% {
+    transform: translateY(0);
+  } /* initial display time */
+  100% {
+    transform: translateY(-83.333%);
+  } /* 6 items: scroll 5 steps */
+}
+
+/* Text: same viewport height as logo, strip scrolls down — 6 loops, hold at start then fast→slow */
+.header.loading-active .header-brand-text {
+  overflow: hidden;
+  height: var(--loading-viewport-height);
+  width: 200px;
+  display: block;
+}
+.header.loading-active .header-brand-text-scroll span:nth-child(n + 3) {
+  display: block;
+}
+.header.loading-active .header-brand-text-scroll {
+  animation: textScrollDown 1.8s ease-out 1 both;
+}
+@keyframes textScrollDown {
+  0% {
+    transform: translateY(-83.333%);
+  } /* initial display time, 6 blocks */
+  100% {
+    transform: translateY(0);
+  }
+}

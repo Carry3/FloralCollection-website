@@ -1,0 +1,148 @@
+/* ═══════════════════════════════════════════════════
+   GUARANTEES SECTION (SPIRAL)
+   ═══════════════════════════════════════════════════ */
+.guarantees {
+  padding-top: var(--space-128);
+  position: relative;
+}
+
+/* 黑色背景遮罩层，JS 控制 opacity */
+.guarantees-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: #080808;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 所有内容浮在遮罩上方 */
+.guarantees-header,
+.guarantees-top-text,
+.guarantees-scroll-group,
+.guarantees-track,
+.guarantees-mobile-grid {
+  position: relative;
+  z-index: 1;
+}
+
+.guarantees-header {
+  text-align: center;
+  padding: var(--space-40) var(--space-80) 0;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.guarantees-top-text {
+  text-align: center;
+  padding: 0 var(--space-80);
+  position: relative;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.guarantees-top-text .overline {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent-text-safe);
+  margin-bottom: var(--space-24);
+}
+
+.guarantees-header h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(26px, 3.5vw, 48px);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--text-primary);
+}
+
+/* Sticky container for the header and track */
+.guarantees-scroll-group {
+  position: relative;
+}
+
+/* ── Desktop 3D cylinder carousel (sticky scroll-jack) ── */
+
+/* tall track — provides the scroll distance (~0.5 viewport per card transition) */
+.guarantees-track {
+  position: relative;
+  height: 160vh;
+}
+
+/* sticky pin — stays fixed in viewport while track scrolls */
+.guarantees-pin {
+  position: sticky;
+  top: 72px; /* below standard header */
+  height: calc(100vh - 72px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: visible; /* let 3D cards breathe outside bounds */
+}
+
+.guarantees-viewport {
+  width: 100%;
+  flex: 1; /* take the rest of the height below header */
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.guarantees-cylinder {
+  position: relative;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.guarantees-card-slot {
+  position: absolute;
+  width: 480px;
+  height: 270px;
+  left: -240px;
+  top: -135px;
+  transform-style: preserve-3d;
+}
+
+.guarantees-card-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+.guarantees-card-inner img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* transition: filter 0.3s ease; */
+}
+
+.guarantees-card-label {
+  position: absolute;
+  bottom: 16px;
+  left: 20px;
+  right: 20px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-heading);
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* ── Mobile simple grid ── */
+.guarantees-mobile-grid {
+  display: none;
+}
+
