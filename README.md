@@ -39,6 +39,21 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Deploy on Cloudflare (OpenNext)
+
+本项目使用 [OpenNext for Cloudflare](https://opennext.js.org/cloudflare) 部署到 Cloudflare Workers/Pages。
+
+**在 Cloudflare 后台必须使用 OpenNext 的构建命令，不能只用 `next build`：**
+
+| 设置项 | 应填写的值 |
+|--------|------------|
+| **Build command** | `npm run build:cloudflare` 或 `npx opennextjs-cloudflare build` |
+| **Deploy command** | `npx wrangler deploy` |
+
+若使用「一条命令」构建+部署，可把 Build command 设为 `npm run deploy`（会先执行 `opennextjs-cloudflare build` 再执行 `wrangler deploy`），Deploy command 留空或与平台默认一致。
+
+本地预览：`npm run preview`。
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
