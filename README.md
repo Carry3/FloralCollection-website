@@ -41,10 +41,11 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Cloudflare (OpenNext)
 
-通过 **GitHub Actions** 部署到 Cloudflare Workers：推送到 `main` 分支或手动触发 workflow 即可。需在仓库 Settings → Secrets and variables → Actions 中配置：
+在 Cloudflare 后台用 **Connect to Git**（Workers Builds）连接本仓库，无需在 GitHub 配置 secrets，Cloudflare 会自动处理认证。
 
-- `CLOUDFLARE_ACCOUNT_ID` — 在 Cloudflare 控制台右侧或 Workers 概览页可见
-- `CLOUDFLARE_API_TOKEN` — 在 [My Profile → API Tokens](https://dash.cloudflare.com/profile/api-tokens) 创建，需具备 Workers 编辑权限
+**Settings → Build** 中配置：
+- **Build command**：`npx opennextjs-cloudflare build`
+- **Deploy command**：`npx wrangler deploy`（默认即可）
 
 ## Deploy on Vercel
 
