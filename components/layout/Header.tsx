@@ -341,9 +341,14 @@ export default function Header() {
                             <circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
                         </svg>
                     </button>
-                    <button type="button" className="header-cta" onClick={() => setContactOpen(true)}>
-                        Contact Us
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                    <button type="button" className="header-cta" aria-label="Contact us" onClick={() => setContactOpen(true)}>
+                        <span className="header-cta-label">Contact Us</span>
+                        <svg className="header-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                        {/* 手机端只显示这个图标（打开电话 / 短信 / 邮件联系弹窗） */}
+                        <svg className="header-cta-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.2 9.2 0 0 1-3.8-.8L3 20.5l1.4-4.6A8 8 0 0 1 3 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5z" />
+                            <path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01" strokeWidth="2.2" />
+                        </svg>
                     </button>
                 </div>
             </header>
@@ -392,7 +397,10 @@ export default function Header() {
                                 </svg>
                                 <div className="contact-modal-item-text">
                                     <span className="contact-modal-label">Email</span>
-                                    <span className="contact-modal-value">{CONTACT.email}</span>
+                                    <span className="contact-modal-value">
+                                        {/* 允许在 @ 前换行，长邮箱在窄屏上断得更自然 */}
+                                        {CONTACT.email.split("@")[0]}<wbr />@{CONTACT.email.split("@")[1]}
+                                    </span>
                                 </div>
                             </a>
                         </div>

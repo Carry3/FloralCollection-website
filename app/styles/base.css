@@ -19,6 +19,10 @@ html {
   /* 关闭原生橡皮筋/滚动链：Safari 的 overscroll 回弹与动量会和 Lenis 虚拟滚动
      算法剧烈冲突 → 抖动/卡顿。 */
   overscroll-behavior: none;
+  /* 禁止横向滚动（手机上左右晃）：根元素的 overflow 会作用到整个视口，
+     视口本身就是滚动容器，所以不影响 position: sticky。
+     仅靠 body 的 overflow-x: clip 在部分 iPhone Safari 上不生效 */
+  overflow-x: hidden;
 }
 
 body {

@@ -217,12 +217,18 @@
   }
 }
 
-/* 蜜罐字段：对人隐藏，机器人会填 */
+/* 蜜罐字段：对人隐藏，机器人会填。
+   用裁剪方式隐藏（不要用 left: -9999px 推到屏幕外，iPhone Safari 上会引起页面横向滚动） */
 .contact-honeypot {
   position: absolute;
-  left: -9999px;
   width: 1px;
   height: 1px;
+  padding: 0;
+  margin: -1px;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
   opacity: 0;
 }
 .contact-package-chip {

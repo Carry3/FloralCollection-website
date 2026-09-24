@@ -723,7 +723,11 @@
 .contact-modal {
   position: relative;
   width: 380px;
-  max-width: calc(100vw - 48px);
+  max-width: calc(100vw - 32px);
+  /* 内容再多也不超出屏幕：超出时在弹窗内滚动 */
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--bg-elevated);
   border-radius: var(--radius-xl);
   padding: var(--space-40) var(--space-32) var(--space-32);
@@ -796,6 +800,9 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  /* 允许在 flex 行里收缩，长邮箱才能换行而不是把弹窗撑破 */
+  min-width: 0;
+  flex: 1;
 }
 .contact-modal-label {
   font-size: 11px;
@@ -809,6 +816,21 @@
   font-weight: 500;
   color: var(--text-primary);
   letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 576px) {
+  .contact-modal {
+    padding: var(--space-32) var(--space-20) var(--space-20);
+  }
+  .contact-modal-item {
+    gap: var(--space-12);
+    padding: var(--space-12);
+  }
+  .contact-modal-value {
+    font-size: 14px;
+    letter-spacing: 0;
+  }
 }
 
 
@@ -817,4 +839,33 @@
   .theme-toggle {
     display: none;
   }
+}
+
+/* ── Contact Us：手机端只保留一个圆形图标按钮，省出导航栏空间 ── */
+.header-cta .header-cta-icon {
+  display: none;
+}
+@media (max-width: 768px) {
+  .header-cta {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .header-cta .header-cta-label,
+  .header-cta .header-cta-arrow {
+    display: none;
+  }
+  .header-cta .header-cta-icon {
+    display: block;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* 导航栏横向不允许超出屏幕：开屏动画期间品牌文字会临时伸到屏幕外，
+   在 iPhone Safari 上可能让整页可以左右滑动（纵向不裁，菜单照常向下展开） */
+.header {
+  overflow-x: clip;
 }
