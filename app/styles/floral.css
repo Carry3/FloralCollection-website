@@ -846,11 +846,22 @@
   margin-top: var(--space-32);
   text-align: left;
 }
+/* Warm Stone 方框（客户要求）：用浅色调 + Warm Stone 描边表达，避免整块中灰色显得沉闷 */
 .faq-item {
-  background: var(--palette-warm-stone);
+  --faq-stone: var(--palette-warm-stone);
+  background: color-mix(in srgb, var(--faq-stone) 12%, #fff);
+  border: 1px solid color-mix(in srgb, var(--faq-stone) 55%, #fff);
   border-radius: var(--radius-md);
-  color: #2f2a23;
+  color: var(--text-primary);
   overflow: hidden;
+  transition: background 0.3s, border-color 0.3s;
+}
+.faq-item:hover {
+  border-color: var(--faq-stone);
+}
+.faq-item.is-open {
+  background: color-mix(in srgb, var(--faq-stone) 18%, #fff);
+  border-color: var(--faq-stone);
 }
 .faq-trigger {
   width: 100%;
@@ -863,9 +874,10 @@
 }
 .faq-prefix {
   flex-shrink: 0;
-  font-size: 16px;
+  font-family: var(--font-heading);
+  font-size: 18px;
   font-weight: 400;
-  color: rgba(47, 42, 35, 0.6);
+  color: var(--accent-text-safe);
 }
 .faq-question {
   flex: 1;
@@ -879,23 +891,25 @@
   font-size: 22px;
   font-weight: 300;
   line-height: 1;
-  color: rgba(47, 42, 35, 0.65);
+  color: var(--accent-text-safe);
 }
 .faq-answer-wrap {
-  border-top: 1px solid rgba(47, 42, 35, 0.12);
+  border-top: 1px solid color-mix(in srgb, var(--faq-stone) 45%, transparent);
+  margin: 0 var(--space-24);
 }
 .faq-answer {
   display: flex;
   gap: var(--space-8);
-  padding: var(--space-20) var(--space-24) var(--space-24);
+  padding: var(--space-20) 0 var(--space-24);
 }
 .faq-answer-body p {
   font-size: 15px;
   line-height: 1.7;
-  color: #3a342c;
+  color: color-mix(in srgb, var(--text-primary) 85%, #fff);
 }
 .faq-answer-body strong {
   font-weight: 600;
+  color: var(--text-primary);
 }
 .faq-package-links {
   list-style: none;
@@ -907,16 +921,18 @@
 .faq-package-links a {
   display: inline-block;
   padding: var(--space-4) var(--space-16);
-  border: 1px solid rgba(47, 42, 35, 0.35);
+  border: 1px solid var(--palette-warm-stone);
   border-radius: var(--radius-full);
+  background: #fff;
   font-size: 14px;
-  font-weight: 600;
-  color: #2f2a23;
-  transition: background 0.3s, color 0.3s;
+  font-weight: 500;
+  color: var(--accent-text-safe);
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
 }
 .faq-package-links a:hover {
-  background: #2f2a23;
-  color: var(--palette-porcelain-white);
+  background: var(--palette-mocha-taupe);
+  border-color: var(--palette-mocha-taupe);
+  color: #fff;
 }
 
 /* ═══ Responsive ═══ */
