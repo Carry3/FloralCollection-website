@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import Link from "next/link";
 import { TransitionLink } from "@/components/ui/TransitionLink";
+import { getStripePromise } from "@/lib/stripe-client";
 import { PACKAGES, type FlowerPackage } from "@/lib/packages";
 import {
     BALANCE_DUE_DAYS,
@@ -18,8 +18,6 @@ import {
     quote,
     type PaymentPlan,
 } from "@/lib/booking";
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
 
 /** Stripe Elements 外观：跟随网站调色板 */
 export const STRIPE_APPEARANCE = {
@@ -265,7 +263,7 @@ export default function BookingFlow({ pkg }: { pkg: FlowerPackage }) {
                         <div className="booking-recap">
                             {formatDateLong(form.eventDate)} · {form.eventTime} · {form.venueName || form.venueAddress}
                         </div>
-                        <Elements stripe={stripePromise} options={{ clientSecret, appearance: STRIPE_APPEARANCE }}>
+                        <Elements stripe={getStripePromise()} options={{ clientSecret, appearance: STRIPE_APPEARANCE }}>
                             <CheckoutForm orderNumber={orderNumber} chargeLabel={formatCents(q.chargeCents)} />
                         </Elements>
                         <p className="booking-fine-print">

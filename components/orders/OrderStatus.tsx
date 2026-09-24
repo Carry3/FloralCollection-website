@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { TransitionLink } from "@/components/ui/TransitionLink";
+import { getStripePromise } from "@/lib/stripe-client";
 import { STRIPE_APPEARANCE } from "@/components/booking/BookingFlow";
 import { CARD_FEE_RATE, formatCents, formatDateLong, formatTimestampDate } from "@/lib/booking";
 import type { PublicOrder } from "@/lib/server/orders";
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
 
 const STEPS: Array<{ key: string; label: string }> = [
     { key: "reserved", label: "Date reserved" },
@@ -142,7 +140,7 @@ export default function OrderStatus({ order, token }: { order: PublicOrder; toke
                                     {loading ? "Preparing…" : `Pay Balance — ${formatCents(order.balanceCents + order.balanceFeeCents)}`}
                                 </button>
                             ) : (
-                                <Elements stripe={stripePromise} options={{ clientSecret, appearance: STRIPE_APPEARANCE }}>
+                                <Elements stripe={getStripePromise()} options={{ clientSecret, appearance: STRIPE_APPEARANCE }}>
                                     <BalanceForm orderNumber={order.orderNumber} token={token} chargeLabel={formatCents(order.balanceCents + order.balanceFeeCents)} />
                                 </Elements>
                             )}
