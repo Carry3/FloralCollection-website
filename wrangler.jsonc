@@ -7,6 +7,8 @@
     "nodejs_compat",
     "global_fetch_strictly_public"
   ],
+  // 明文变量（ADMIN_EMAIL / EMAIL_FROM / SITE_URL …）在 Cloudflare 后台维护，上传新版本时不要覆盖
+  "keep_vars": true,
   // 每天 13:00 UTC（美东夏令时 9:00 / 冬令时 8:00）发送尾款提醒，见 cloudflare-worker.ts
   "triggers": {
     "crons": ["0 13 * * *"]
