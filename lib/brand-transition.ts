@@ -27,3 +27,10 @@ export const BRAND_COLOR_S = 0.3;
  */
 export const BRAND_COMPACT_QUERY = "(max-width: 768px)";
 export const BRAND_COMPACT_PRE_S = 0.5;
+
+/** 不播放开场 loading 的页面：付款完成后由 Stripe / 整页跳转进入，再放一次品牌开场会显得像又在"处理中"。
+    这些页面直接显示内容，由页面自身的入场动画（画勾 + 依次淡入）承接。站内点击跳转仍走正常的幕布过渡。 */
+const NO_INTRO_PATHS = [/^\/book\/success\/?$/, /^\/order\/[^/]+\/?$/];
+export function skipsIntro(pathname: string | null): boolean {
+    return !!pathname && NO_INTRO_PATHS.some((re) => re.test(pathname));
+}

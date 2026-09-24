@@ -24,7 +24,7 @@ export default async function OrderDetailPage({
 
     if (!booking || !valid) {
         return (
-            <section className="booking-section order-section">
+            <section className="booking-section order-section" data-no-intro>
                 <OrderLookup initialOrderNumber={ORDER_NUMBER_PATTERN.test(orderNumber) ? orderNumber : ""} notice={t ? "This link is no longer valid. Please enter your email to view the order." : undefined} />
             </section>
         );
@@ -36,7 +36,7 @@ export default async function OrderDetailPage({
     }
 
     return (
-        <section className="booking-section order-section">
+        <section className="booking-section order-section" data-no-intro>
             <OrderStatus order={publicOrder(booking)} token={t!} />
         </section>
     );

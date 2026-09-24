@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useCallback } from "react";
+import { useEffect, useLayoutEffect, useRef, useCallback, useState } from "react";
+import { usePathname } from "next/navigation";
 import { usePreloader } from "@/components/providers/PreloaderProvider";
-import { BRAND_COMPACT_PRE_S, BRAND_COMPACT_QUERY, CURTAIN_DELAY_S, CURTAIN_EASE_CSS, CURTAIN_S } from "@/lib/brand-transition";
+import { BRAND_COMPACT_PRE_S, BRAND_COMPACT_QUERY, CURTAIN_DELAY_S, CURTAIN_EASE_CSS, CURTAIN_S, skipsIntro } from "@/lib/brand-transition";
 
 const MIN_LOADING_MS = 2300;
 const MAX_LOADING_MS = 2500;
@@ -35,6 +36,9 @@ export default function Preloader() {
     const prevNavLoading = useRef(false);
     // 正在运行的幕布动画（WAAPI），用于在导航复位时取消
     const curtainAnims = useRef<Animation[]>([]);
+    // 只看首次进入的页面：之后站内跳转仍然使用幕布
+    const pathname = usePathname();
+    const [skipIntro] = useState(() => skipsIntro(pathname));
 
     /** 统一的"展开幕布"逻辑
        用 Web Animations API（浏览器驱动），不用 GSAP：加载期间 GSAP 活动为零，
@@ -82,6 +86,7 @@ export default function Preloader() {
 
     /* 初次加载：等待资源 + 最短时间，然后展开幕布 */
     useEffect(() => {
+        if (skipIntro) return;
         let isCancelled = false;
         document.body.style.overflow = "hidden";
 
@@ -101,7 +106,7 @@ export default function Preloader() {
             isCancelled = true;
             document.body.style.overflow = "";
         };
-    }, [setPreloaderDone, openCurtains]);
+    }, [setPreloaderDone, openCurtains, skipIntro]);
 
     /* 导航：navLoading true→覆盖，true→false→展开
        用 useLayoutEffect（绘制前）盖幕布，与 Header 居中 logo 的 useLayoutEffect 同一帧完成，
@@ -128,7 +133,7 @@ export default function Preloader() {
     }, [navLoading, openCurtains]);
 
     return (
-        <div className="loading-overlay" aria-hidden="true">
+        <div className="loading-overlay" aria-hidden="true" style={skipIntro ? { visibility: "hidden" } : undefined}>
             <div ref={curtainLeftRef} className="curtain-left" />
             <div ref={curtainRightRef} className="curtain-right" />
         </div>

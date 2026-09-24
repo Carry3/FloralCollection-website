@@ -33,7 +33,7 @@ export default async function BookingSuccessPage({
 
     if (!booking || !piStatus || (piStatus !== "succeeded" && piStatus !== "processing")) {
         return (
-            <section className="booking-section booking-success">
+            <section className="booking-section booking-success" data-no-intro>
                 <h1 className="payment-success-title">Payment not completed</h1>
                 <p className="booking-success-text">
                     We couldn&apos;t confirm your payment. You have not been charged for an incomplete payment.
@@ -47,7 +47,7 @@ export default async function BookingSuccessPage({
     const processing = piStatus === "processing";
     const balance = balanceCents(booking);
     return (
-        <section className="booking-section booking-success">
+        <section className="booking-section booking-success" data-no-intro>
             <PaymentSuccessStatus
                 label={processing ? "Payment processing" : "Payment successful"}
                 title={processing ? "Almost there" : "Your Date Is Reserved"}

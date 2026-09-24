@@ -115,3 +115,8 @@
   0% { transform: translateY(-83.333%); }
   100% { transform: translateY(0); }
 }
+
+/* 不播放开场的页面（见 lib/brand-transition.ts skipsIntro）：首屏遮罩在服务端布局里、不知道路径，用页面上的标记隐藏它 */
+body:has([data-no-intro]) #first-paint-overlay {
+  display: none;
+}
