@@ -51,7 +51,7 @@
 
 /* ── Light mode: dark overlay → white text stays readable ── */
 [data-theme='light'] .subpage-hero-overlay {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.48) 100%);
+  background: linear-gradient(180deg, rgba(58, 51, 43, 0.45) 0%, rgba(74, 66, 56, 0.1) 25%, rgba(74, 66, 56, 0.2) 55%, rgba(58, 51, 43, 0.65) 100%);
 }
 
 /* ── Dark mode: deeper dark overlay → white text stays readable ── */
@@ -59,9 +59,9 @@
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.60) 100%);
 }
 
-/* ── Overline: always gold ── */
+/* ── Overline: 浅香槟色，压在照片上依旧可读 ── */
 .subpage-hero-content .overline {
-  color: var(--accent);
+  color: var(--palette-champagne-beige);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.25em;
@@ -77,6 +77,12 @@
   padding: 0 var(--space-80) var(--space-64);
   max-width: 1440px;
   margin: 0 auto;
+}
+.subpage-hero-content--right {
+  text-align: right;
+}
+.subpage-hero-content--right .subpage-hero-title-wrap {
+  justify-content: flex-end;
 }
 .subpage-hero-title-wrap {
   display: flex;
@@ -207,6 +213,63 @@
   }
   .subpage-hero-content {
     padding: 0 var(--space-24) var(--space-40);
+  }
+}
+
+/* ── CTA block (package detail pages) ── */
+.subpage-cta {
+  padding: var(--space-96) var(--space-80);
+  background: var(--bg-secondary);
+}
+.subpage-cta-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+.subpage-cta-title {
+  font-family: var(--font-heading);
+  font-size: clamp(28px, 3.5vw, 40px);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text-primary);
+  margin-bottom: var(--space-16);
+}
+.subpage-cta-desc {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-32);
+}
+.subpage-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-10);
+  padding: var(--space-14) var(--space-32);
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border-radius: var(--radius-sm);
+  transition: background 0.25s, gap 0.3s;
+}
+.subpage-cta-btn:hover {
+  background: var(--accent-hover, #b8860b);
+  gap: var(--space-14);
+}
+
+@media (max-width: 1024px) {
+  .subpage-cta {
+    padding: var(--space-64) var(--space-40);
+  }
+}
+@media (max-width: 768px) {
+  .subpage-cta {
+    padding: var(--space-48) var(--space-24);
+  }
+  .subpage-cta-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 

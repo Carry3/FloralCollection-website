@@ -14,9 +14,11 @@ interface Props {
     subtitle?: string;
     overline?: string;
     compact?: boolean;
+    /** 标题所在的底部角落，默认左下 */
+    align?: "left" | "right";
 }
 
-export default function SubpageHero({ image, title, subtitle, overline, compact }: Props) {
+export default function SubpageHero({ image, title, subtitle, overline, compact, align = "left" }: Props) {
     const sectionRef = useRef<HTMLElement | null>(null);
     const bgRef = useRef<HTMLDivElement>(null);   // background container only (clip here)
     const wrapperRef = useRef<HTMLDivElement>(null);   // image + overlay (3D fold)
@@ -74,7 +76,7 @@ export default function SubpageHero({ image, title, subtitle, overline, compact 
             const textEls = titleWrapRef.current.querySelectorAll("h1, p");
             tl.fromTo(textEls,
                 { color: "#ffffff" },
-                { color: "#1a1a1a", ease: "none", duration: DUR * 0.7 },
+                { color: "#4a4238", ease: "none", duration: DUR * 0.7 },
                 0
             );
         }
@@ -94,7 +96,7 @@ export default function SubpageHero({ image, title, subtitle, overline, compact 
                 </div>
 
                 {/* Content layer — entirely separate from the clip, never disappears */}
-                <div className="subpage-hero-content">
+                <div className={`subpage-hero-content${align === "right" ? " subpage-hero-content--right" : ""}`}>
                     {overline && <div className="overline">{overline}</div>}
                     <div ref={titleWrapRef} className="subpage-hero-title-wrap">
                         <h1 className="subpage-hero-title">{title}</h1>

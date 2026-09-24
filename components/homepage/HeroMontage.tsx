@@ -4,10 +4,10 @@ import Link from "next/link";
 import { usePreloader } from "@/components/providers/PreloaderProvider";
 
 const SLIDES = [
-    { src: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1600&h=900&fit=crop&q=80" },
-    { src: "https://images.unsplash.com/photo-1508610048658-a5b83e33f995?w=1600&h=900&fit=crop&q=80" },
-    { src: "https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=1600&h=900&fit=crop&q=80" },
-    { src: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1600&h=900&fit=crop&q=80" },
+    { src: "/images/hero/entrance.webp" },
+    { src: "/images/hero/ceremony.webp" },
+    { src: "/images/hero/reception.webp" },
+    { src: "/images/hero/lounge.webp" },
 ];
 
 export default function HeroMontage() {
@@ -34,16 +34,16 @@ export default function HeroMontage() {
                 })}
                 <div className="hero-overlay" />
                 <div className="hero-content">
-                    <div className="hero-overline">The Floral Collection</div>
+                    <div className="hero-overline">Premium Floral Rentals &amp; Event Setup</div>
                     <h1 className="hero-title">
-                        Essential · Plus · Luxe · Elite
+                        A Stunning Wedding Without the Stunning Price
                     </h1>
                     <p className="hero-subtitle">
-                        Curated floral arrangements and packages for every occasion. From everyday elegance to bespoke luxury — we bring quality and beauty to your space.
+                        Select the wedding package that best fits your vision. From there, we take care of everything — delivery, setup, and removal — so you can simply enjoy your special day.
                     </p>
                     <div className="hero-actions">
                         <Link href="/#packages" className="btn-primary">
-                            View Packages
+                            Our Packages
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                         </Link>
                         <Link href="/contact" className="btn-secondary">

@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        heading: ["'Playfair Display'", "Georgia", "serif"],
+        heading: ["'Cormorant'", "Georgia", "serif"],
         body: ["'Inter'", "-apple-system", "sans-serif"],
         mono: ["'JetBrains Mono'", "monospace"],
       },

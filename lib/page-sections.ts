@@ -6,19 +6,9 @@ export type PageSection = { id: string; label: string };
 
 export const PAGE_SECTIONS: Record<string, PageSection[]> = {
     "/about": [
-        { id: "abt-story", label: "Our Story" },
+        { id: "abt-who", label: "Who We Are" },
+        { id: "abt-flowers", label: "Our Flowers" },
         { id: "abt-team", label: "Our Team" },
-        { id: "abt-tech", label: "Technology" },
-        { id: "abt-markets", label: "Markets" },
-        { id: "abt-licensing", label: "Licensing" },
-    ],
-    "/technology": [
-        { id: "tech-overview", label: "Overview" },
-        { id: "tech-platform", label: "Platform" },
-    ],
-    "/markets": [
-        { id: "markets-overview", label: "Overview" },
-        { id: "markets-areas", label: "Areas We Serve" },
     ],
 };
 

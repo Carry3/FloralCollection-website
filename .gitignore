@@ -35,3 +35,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Cloudflare（wrangler 本地运行时的密钥 / 本地状态）
+.dev.vars*
+.wrangler
+
+# 客户素材 / 需求文档（已转换的图片在 public/images/）与本地工具配置
+/Archive/
+/Archive.zip
+/Website Overview.pdf
+/.claude/
+/.qoder/

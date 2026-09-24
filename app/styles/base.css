@@ -14,7 +14,11 @@ html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #000000;
+  /* 与开屏/幕布品牌色一致，避免加载或缝隙时露出刺眼的纯黑 */
+  background-color: var(--bg-brand);
+  /* 关闭原生橡皮筋/滚动链：Safari 的 overscroll 回弹与动量会和 Lenis 虚拟滚动
+     算法剧烈冲突 → 抖动/卡顿。 */
+  overscroll-behavior: none;
 }
 
 body {
@@ -22,7 +26,8 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.625;
-  overflow-x: hidden;
+  overflow-x: clip;
+  overscroll-behavior: none;
   min-height: 100vh;
   transition:
     background-color 0.5s var(--ease-smooth),
@@ -52,5 +57,37 @@ button {
   background: none;
   cursor: pointer;
   font-family: inherit;
+}
+
+/* ── Global Typography Rules ───────────────────────────────────────────────
+   ALL headlines site-wide: Cormorant, weight 500
+   ALL body text: Inter, weight 300
+   ──────────────────────────────────────────────────────────────────────── */
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* Body text default: Inter 300 */
+p, li, span, blockquote {
+  font-weight: 300;
+}
+
+/* UI / button / nav labels: Inter 500 — applied via .ui-label utility */
+.ui-label,
+button,
+.btn-primary,
+.btn-secondary,
+nav a,
+nav button {
+  font-weight: 500;
+}
+
+/* Tracking labels: uppercase + weight 500+ */
+.tracking-label {
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
 }
 

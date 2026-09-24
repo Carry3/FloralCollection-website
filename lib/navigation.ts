@@ -5,12 +5,13 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: NavItem[] = [
-    { label: "Essential Package", href: "/essential" },
-    { label: "Plus Package", href: "/plus" },
-    { label: "Luxe Package", href: "/luxe" },
-    { label: "Elite Package", href: "/elite" },
-    { label: "About Us", href: "/about" },
-    { label: "Technology", href: "/technology" },
-    { label: "Markets We Serve", href: "/markets" },
-    { label: "Contact", href: "/contact" },
+    { label: "Home", href: "/" },
+    { label: "Package 1", href: "/classic" },
+    { label: "Package 2", href: "/signature" },
+    { label: "Package 3", href: "/luxe" },
+    { label: "Package 4", href: "/grand" },
+    { label: "About Us & Our Flowers", href: "/about" },
+    { label: "Gallery", href: "/gallery" },
+    { label: "FAQ", href: "/faq" },
+    { label: "Contact Us", href: "/contact" },
 ];

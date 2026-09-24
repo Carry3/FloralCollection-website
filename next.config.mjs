@@ -1,5 +1,10 @@
+import { withPayload } from "@payloadcms/next/withPayload";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    // Cloudflare Workers：pg-cloudflare（Postgres 在 Workers 上的连接实现）与 jose 保持外部引用，
+    // 与 Payload 官方 with-cloudflare 模板一致
+    serverExternalPackages: ["jose", "pg-cloudflare"],
     async redirects() {
         return [
             { source: "/trust", destination: "/", permanent: true },
@@ -25,4 +30,4 @@ const nextConfig = {
     },
 };
 
-export default nextConfig;
+export default withPayload(nextConfig);

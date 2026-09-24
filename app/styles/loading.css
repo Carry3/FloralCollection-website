@@ -5,12 +5,29 @@
   position: fixed;
   inset: 0;
   z-index: 999;
-  background: var(--bg-brand);
-  transition: opacity 0.9s var(--ease-smooth);
   pointer-events: none;
+  overflow: hidden;
+  /* 遮罩本身必须透明（显式覆盖 globals.css 里旧的 background）：
+     否则幕布从中间向上下拉开时，露出来的仍是遮罩的纯色底，看不到"中间裂开露出页面"的效果，
+     只会在最后一帧突然显示页面。两半幕布已各自多出 2px 互相重叠，不会露缝。 */
+  background: none;
 }
-.loading-overlay.hidden {
-  opacity: 0;
+/* Two curtain halves — animated by GSAP */
+.curtain-left,
+.curtain-right {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  /* 各多 2px 向中线重叠，消除拼接细线 */
+  height: calc(50% + 2px);
+  background: var(--bg-brand);
+  will-change: transform;
+}
+.curtain-left {
+  top: 0;
+}
+.curtain-right {
+  bottom: 0;
 }
 
 /* Header in loading state: brand is centered + enlarged; left/right areas hidden */
@@ -22,22 +39,22 @@
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   border-bottom: none !important;
-  --loading-viewport-height: 36px; /* same height for logo and text viewports */
+  --loading-viewport-height: 32px;
 }
 .header.loading-active .header-left,
 .header.loading-active .header-right {
   opacity: 0;
   pointer-events: none;
 }
-/* Left/right areas fade in after loading finishes */
+/* Left/right areas fade in after brand finishes moving */
 .header:not(.loading-active) .header-left,
 .header:not(.loading-active) .header-right {
-  transition: opacity 0.5s ease 0.3s;
+  transition: opacity 0.6s ease 0.9s;
 }
-/* Brand: position is set via JS to exact screen center; CSS only handles non-layout props */
+/* Brand: position is set via JS; CSS only handles non-layout props */
 .header.loading-active .header-brand {
   transition: none;
-  color: var(--text-on-image);
+  color: var(--brand-loading-fg);
   opacity: 1;
   will-change: transform;
   pointer-events: none;
@@ -49,7 +66,7 @@
   color: inherit;
 }
 
-/* Logo: viewport masks top/bottom, strip scrolls up — 6 loops, hold at start then fast→slow */
+/* Logo: viewport masks top/bottom, strip scrolls up */
 .header-brand-logo-viewport {
   display: flex;
   align-items: center;
@@ -77,20 +94,16 @@
   animation: logoScrollUp 1.8s ease-out 1 both;
 }
 @keyframes logoScrollUp {
-  0% {
-    transform: translateY(0);
-  } /* initial display time */
-  100% {
-    transform: translateY(-83.333%);
-  } /* 6 items: scroll 5 steps */
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-83.333%); }
 }
 
-/* Text: same viewport height as logo, strip scrolls down — 6 loops, hold at start then fast→slow */
+/* Text: same viewport height as logo, strip scrolls down */
 .header.loading-active .header-brand-text {
+  width: max-content; /* 覆盖 globals.css 的 200px，避免右侧留白导致视觉不居中 */
   overflow: hidden;
   height: var(--loading-viewport-height);
-  width: 200px;
-  display: block;
+  display: flex;
 }
 .header.loading-active .header-brand-text-scroll span:nth-child(n + 3) {
   display: block;
@@ -99,10 +112,6 @@
   animation: textScrollDown 1.8s ease-out 1 both;
 }
 @keyframes textScrollDown {
-  0% {
-    transform: translateY(-83.333%);
-  } /* initial display time, 6 blocks */
-  100% {
-    transform: translateY(0);
-  }
+  0% { transform: translateY(-83.333%); }
+  100% { transform: translateY(0); }
 }

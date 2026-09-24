@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePreloader } from "@/components/providers/PreloaderProvider";
+import { useLenis } from "@/hooks/useLenis";
 import { ComponentProps } from "react";
 
 type TransitionLinkProps = ComponentProps<typeof Link>;
@@ -10,6 +11,7 @@ type TransitionLinkProps = ComponentProps<typeof Link>;
 export function TransitionLink({ href, onClick, children, ...rest }: TransitionLinkProps) {
     const router = useRouter();
     const { setNavLoading } = usePreloader();
+    const lenis = useLenis();
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         onClick?.(e);
@@ -18,8 +20,14 @@ export function TransitionLink({ href, onClick, children, ...rest }: TransitionL
         const targetPath = target.split("#")[0] || "/";
         if (targetPath && targetPath !== window.location.pathname) {
             e.preventDefault();
+            // Scroll to top immediately before navigation so the new page starts at 0
+            if (lenis) {
+                lenis.scrollTo(0, { immediate: true })
+            } else {
+                window.scrollTo(0, 0)
+            }
             setNavLoading(true);
-            router.push(href as string);
+            requestAnimationFrame(() => router.push(href as string));
         }
     };
 

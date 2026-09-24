@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useLayoutEffect, useCallback, useRef } from "react";
-import Link from "next/link";
 import { TransitionLink } from "@/components/ui/TransitionLink";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/components/providers/ThemeProvider";
@@ -8,9 +7,14 @@ import { usePreloader } from "@/components/providers/PreloaderProvider";
 import { LOGO_SVG } from "@/lib/logo";
 import { getSectionsForPath } from "@/lib/page-sections";
 import { NAV_ITEMS } from "@/lib/navigation";
+import { useScrollLock } from "@/hooks/useScrollLock";
+import { BRAND_COLOR_AT_S, BRAND_COLOR_S, BRAND_COMPACT_PRE_S, BRAND_EASE_GSAP, BRAND_TRANSITION_S } from "@/lib/brand-transition";
+import { CONTACT } from "@/lib/site";
 import gsap from "gsap";
 
 const HEADER_SCROLL_OFFSET = 100;
+/** 加载时品牌居中放大的最大倍数 */
+const LOADING_BRAND_SCALE = 2.5;
 
 export default function Header() {
     const { toggle } = useTheme();
@@ -18,12 +22,13 @@ export default function Header() {
     const pathname = usePathname();
     const isHome = pathname === "/";
     const [scrolled, setScrolled] = useState(false);
-    const [onDark, setOnDark] = useState(isHome);
+    const [onDark, setOnDark] = useState(true);
     const [menuOpen, setMenuOpen] = useState(false);
+    const [contactOpen, setContactOpen] = useState(false);
+    const [subNavVisible, setSubNavVisible] = useState(false);
     const menuWrapperRef = useRef<HTMLDivElement>(null);
     const menuTriggerRef = useRef<HTMLButtonElement>(null);
 
-    /* Measure trigger BEFORE first paint so menu-bg initial size is always exact */
     useLayoutEffect(() => {
         if (!menuTriggerRef.current) return;
         const { width, height } = menuTriggerRef.current.getBoundingClientRect();
@@ -32,16 +37,15 @@ export default function Header() {
         root.style.setProperty("--mtrig-h", `${height}px`);
     }, []);
 
-    /* Close menu when clicking outside the wrapper */
+    // 菜单打开时是模态的：遮罩拦截页面点击（点遮罩关闭），锁定滚动，Esc 关闭
+    useScrollLock(menuOpen);
     useEffect(() => {
         if (!menuOpen) return;
-        const handler = (e: MouseEvent) => {
-            if (menuWrapperRef.current && !menuWrapperRef.current.contains(e.target as Node)) {
-                setMenuOpen(false);
-            }
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === "Escape") setMenuOpen(false);
         };
-        document.addEventListener("mousedown", handler);
-        return () => document.removeEventListener("mousedown", handler);
+        document.addEventListener("keydown", onKey);
+        return () => document.removeEventListener("keydown", onKey);
     }, [menuOpen]);
     const sections = getSectionsForPath(pathname);
     const hasSubNav = sections.length > 0;
@@ -51,18 +55,27 @@ export default function Header() {
         const handler = () => {
             const scrollY = window.scrollY;
             setScrolled(scrollY > 50);
-            if (isHome) {
-                const heroEl = document.querySelector<HTMLElement>(".hero");
-                const heroH = heroEl?.offsetHeight ?? 0;
-                setOnDark(scrollY < heroH - 100);
+
+            const homeHero = document.querySelector<HTMLElement>(".hero");
+            if (homeHero) {
+                setOnDark(scrollY < homeHero.offsetHeight - 100);
+                return;
             }
+
+            const subHero = document.querySelector<HTMLElement>(".subpage-hero");
+            if (subHero) {
+                const stickyEnd = subHero.offsetHeight - window.innerHeight;
+                setOnDark(scrollY < stickyEnd - 50);
+                return;
+            }
+
+            setOnDark(false);
         };
         window.addEventListener("scroll", handler, { passive: true });
         handler();
         return () => window.removeEventListener("scroll", handler);
-    }, [isHome]);
+    }, [pathname]);
 
-    /* Scroll spy: 哪个 section 的顶部已滚过导航下方，就高亮哪个 */
     const updateActiveSection = useCallback(() => {
         if (sections.length === 0) return;
         let current: string | null = null;
@@ -93,64 +106,122 @@ export default function Header() {
 
     useEffect(() => {
         if (!navLoading) return;
-        const t = setTimeout(() => setNavLoading(false), 1800);
+        setSubNavVisible(false);
+        const t = setTimeout(() => setNavLoading(false), 2300);
         return () => clearTimeout(t);
     }, [pathname, navLoading, setNavLoading]);
 
+    useEffect(() => {
+        const onComplete = () => setSubNavVisible(true);
+        window.addEventListener("pageTransitionComplete", onComplete);
+        return () => window.removeEventListener("pageTransitionComplete", onComplete);
+    }, []);
+
     const loadingActive = !preloaderDone || navLoading;
 
-    /* ── Brand positioning: JS-driven to bypass containing-block issues ── */
     const brandAnimating = useRef(false);
     const wasLoadingActive = useRef(loadingActive);
-    const brandNaturalCenter = useRef<{ x: number; y: number } | null>(null);
 
     useLayoutEffect(() => {
         const brand = document.querySelector<HTMLElement>('.header-brand');
         if (!brand) return;
 
         if (loadingActive) {
-            if (!brandNaturalCenter.current) {
+            // 加载中：品牌居中放大。放大倍数按屏宽收敛（手机上 2.5 倍会超出屏幕，看起来不居中）。
+            // Cormorant 字体晚于首帧加载会让文字变宽、中心点漂移，因此字体就绪 / 尺寸变化时都重算。
+            const recenter = () => {
                 brand.style.transition = 'none';
                 brand.style.transform = 'none';
                 void brand.offsetHeight;
                 const rect = brand.getBoundingClientRect();
-                brandNaturalCenter.current = {
-                    x: rect.left + rect.width / 2,
-                    y: rect.top + rect.height / 2,
-                };
-            }
-            const { x: natX, y: natY } = brandNaturalCenter.current;
-            const dx = window.innerWidth / 2 - natX;
-            const dy = window.innerHeight / 2 - natY;
-            brand.style.transition = 'none';
-            brand.style.transform = `translate(${dx}px, ${dy}px) scale(2.5)`;
-            brand.style.willChange = 'transform';
+                const scale = Math.min(LOADING_BRAND_SCALE, (window.innerWidth * 0.84) / rect.width);
+                const dx = window.innerWidth / 2 - (rect.left + rect.width / 2);
+                const dy = window.innerHeight / 2 - (rect.top + rect.height / 2);
+                brand.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
+                brand.style.willChange = 'transform';
+            };
+            recenter();
+
+            let disposed = false;
+            document.fonts?.ready.then(() => {
+                if (!disposed) recenter();
+            });
+            const ro = new ResizeObserver(() => {
+                if (!disposed) recenter();
+            });
+            ro.observe(brand);
+            window.addEventListener('resize', recenter);
+            wasLoadingActive.current = loadingActive;
+            return () => {
+                disposed = true;
+                ro.disconnect();
+                window.removeEventListener('resize', recenter);
+            };
         } else if (wasLoadingActive.current && !brandAnimating.current) {
             brandAnimating.current = true;
 
-            brand.style.transform = 'none';
-            void brand.offsetHeight;
-            const newRect = brand.getBoundingClientRect();
-            const newCX = newRect.left + newRect.width / 2;
-            const newCY = newRect.top + newRect.height / 2;
-            const fromDx = window.innerWidth / 2 - newCX;
-            const fromDy = window.innerHeight / 2 - newCY;
+            const logoStrip = brand.querySelector<HTMLElement>('.header-brand-logo-strip');
+            const textScroll = brand.querySelector<HTMLElement>('.header-brand-text-scroll');
+            const logo = brand.querySelector<HTMLElement>('.header-brand-logo-viewport');
+            const text = brand.querySelector<HTMLElement>('.header-brand-text');
+            if (!logo || !text) {
+                brandAnimating.current = false;
+                return;
+            }
+            if (logoStrip) logoStrip.style.animation = 'none';
+            if (textScroll) textScroll.style.animation = 'none';
 
-            gsap.fromTo(brand,
-                { x: fromDx, y: fromDy, scale: 2.5 },
-                {
-                    x: 0,
-                    y: 0,
-                    scale: 1,
-                    duration: 0.9,
-                    ease: 'power3.inOut',
-                    onComplete: () => {
-                        gsap.set(brand, { clearProps: 'all' });
-                        brandAnimating.current = false;
-                        brandNaturalCenter.current = null;
-                    },
-                },
-            );
+            // ── FLIP：以 logo 为锚点，从加载时的视觉位置飞到导航栏里的最终位置 ──
+            // First：加载态（此刻 DOM 里仍带着居中放大的 transform）
+            // 临时还原成纯加载态的 class（去掉 on-dark 等，否则它们会盖过加载色）
+            const headerEl = brand.closest<HTMLElement>('.header');
+            const finalClassName = headerEl?.className ?? '';
+            if (headerEl) headerEl.className = 'header visible loading-active';
+            const firstLogo = logo.getBoundingClientRect();
+            const loadingColor = getComputedStyle(brand).color;
+            if (headerEl) headerEl.className = finalClassName;
+
+            // Last：最终布局
+            brand.style.cssText = 'transition:none !important;';
+            // 手机端导航栏不显示文字 —— 让文字暂时脱离布局、留在 logo 旁边，先淡出再飞行
+            const textHiddenInHeader = getComputedStyle(text).display === 'none';
+            if (textHiddenInHeader) {
+                text.style.cssText = 'display:flex;position:absolute;left:100%;top:50%;margin-left:12px;transform:translateY(-50%);white-space:nowrap;';
+            }
+            void brand.offsetHeight;
+            const brandRect = brand.getBoundingClientRect();
+            const lastLogo = logo.getBoundingClientRect();
+            const targetColor = getComputedStyle(brand).color;
+
+            const scale = firstLogo.height / lastLogo.height;
+            const originX = lastLogo.left + lastLogo.width / 2 - brandRect.left;
+            const originY = lastLogo.top + lastLogo.height / 2 - brandRect.top;
+            const dx = firstLogo.left + firstLogo.width / 2 - (lastLogo.left + lastLogo.width / 2);
+            const dy = firstLogo.top + firstLogo.height / 2 - (lastLogo.top + lastLogo.height / 2);
+
+            // 落位期间保持加载时的颜色，固定到导航栏之后再变色
+            gsap.set(brand, { transformOrigin: `${originX}px ${originY}px`, x: dx, y: dy, scale, color: loadingColor });
+
+            const finish = () => {
+                gsap.set(brand, { clearProps: 'all' });
+                brand.style.cssText = '';
+                text.style.cssText = '';
+                if (logoStrip) logoStrip.style.animation = '';
+                if (textScroll) textScroll.style.animation = '';
+                brandAnimating.current = false;
+            };
+
+            const tl = gsap.timeline({ onComplete: finish });
+            // 小屏导航栏只有 logo 图标：先让文字淡出、图标平移到屏幕正中，再上移（幕布同样顺延，见 Preloader）
+            const pre = textHiddenInHeader ? BRAND_COMPACT_PRE_S : 0;
+            if (textHiddenInHeader) {
+                tl.to(text, { opacity: 0, duration: pre * 0.6, ease: 'power1.out' }, 0)
+                    .to(brand, { x: window.innerWidth / 2 - (lastLogo.left + lastLogo.width / 2), duration: pre * 0.8, ease: 'power2.inOut' }, pre * 0.2);
+            }
+            tl.to(brand, { x: 0, y: 0, scale: 1, duration: BRAND_TRANSITION_S, ease: BRAND_EASE_GSAP }, pre)
+                .add(() => { window.dispatchEvent(new Event('pageTransitionComplete')); }, pre + BRAND_TRANSITION_S)
+                // 等幕布越过落位后的 logo 再变色，否则会在幕布上变成白色、看不清
+                .to(brand, { color: targetColor, duration: BRAND_COLOR_S, ease: 'power1.out' }, pre + BRAND_COLOR_AT_S);
         }
         wasLoadingActive.current = loadingActive;
     });
@@ -160,23 +231,28 @@ export default function Header() {
         (preloaderDone || navLoading) ? "visible" : "",
         loadingActive ? "loading-active" : "",
         (!loadingActive && scrolled) ? "scrolled" : "",
-        (!loadingActive && isHome && onDark) ? "on-dark" : "",
+        (!loadingActive && onDark) ? "on-dark" : "",
         hasSubNav ? "has-sub-nav" : "",
+        menuOpen ? "menu-open" : "",
     ].filter(Boolean).join(" ");
 
     return (
         <>
-            <header id="header" className={headerClass}>
+            <header
+                id="header"
+                className={headerClass}
+                onClick={(e) => {
+                    // 菜单打开时点导航栏其他区域 = 点遮罩，关闭菜单
+                    if (menuOpen && !menuWrapperRef.current?.contains(e.target as Node)) setMenuOpen(false);
+                }}
+            >
                 <div className="header-left">
-                    {/* ── Menu wrapper: the expanding pill lives here ── */}
                     <div
                         ref={menuWrapperRef}
                         className={`menu-wrapper${menuOpen ? " is-open" : ""}`}
                     >
-                        {/* Background pill — starts as button size, expands into modal */}
                         <div className="menu-bg" aria-hidden="true" />
 
-                        {/* Trigger: always on top */}
                         <button
                             ref={menuTriggerRef}
                             className="menu-trigger"
@@ -191,7 +267,6 @@ export default function Header() {
                             <span className="menu-trigger-label">MENU</span>
                         </button>
 
-                        {/* Menu content — revealed after expansion */}
                         <div className="menu-content" aria-hidden={!menuOpen}>
                             <nav className="menu-nav">
                                 {NAV_ITEMS.map((item) => (
@@ -199,6 +274,7 @@ export default function Header() {
                                         key={item.label}
                                         href={item.href}
                                         className="menu-item menu-item-header"
+                                        aria-current={pathname === item.href ? "page" : undefined}
                                         onClick={() => setMenuOpen(false)}
                                     >
                                         <span className="menu-item-title">{item.label}</span>
@@ -206,8 +282,8 @@ export default function Header() {
                                 ))}
                             </nav>
                             <div className="menu-footer">
-                                <p>info@floralcollection.com</p>
-                                <p>(800) 123-4567</p>
+                                <p>{CONTACT.email}</p>
+                                <p>{CONTACT.phone}</p>
                             </div>
                         </div>
                     </div>
@@ -241,7 +317,7 @@ export default function Header() {
                         </span>
                     </TransitionLink>
                     {hasSubNav && (
-                        <nav className="header-sub-nav visible" aria-label="Page sections">
+                        <nav className={`header-sub-nav${subNavVisible ? " visible" : ""}`} aria-label="Page sections">
                             <div className="header-sub-nav-tabs">
                                 {sections.map(({ id, label }) => (
                                     <button
@@ -265,14 +341,64 @@ export default function Header() {
                             <circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
                         </svg>
                     </button>
-                    <Link href="/contact" className="header-cta">
+                    <button type="button" className="header-cta" onClick={() => setContactOpen(true)}>
                         Contact Us
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                    </Link>
+                    </button>
                 </div>
             </header>
-            {/* Page blur overlay — appears behind header, blurs page content when menu is open */}
-            <div className={`menu-blur-overlay${menuOpen ? " active" : ""}`} aria-hidden="true" />
+            <div
+                className={`menu-blur-overlay${menuOpen ? " active" : ""}`}
+                aria-hidden="true"
+                onClick={() => setMenuOpen(false)}
+            />
+
+            {contactOpen && (
+                <div className="contact-modal-overlay" onClick={() => setContactOpen(false)}>
+                    <div className="contact-modal" onClick={(e) => e.stopPropagation()}>
+                        <button
+                            className="contact-modal-close"
+                            onClick={() => setContactOpen(false)}
+                            aria-label="Close contact info"
+                        >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                <path d="M18 6L6 18M6 6l12 12" />
+                            </svg>
+                        </button>
+                        <h3 className="contact-modal-title">Get in Touch</h3>
+                        <div className="contact-modal-items">
+                            <a href={CONTACT.phoneHref} className="contact-modal-item">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
+                                </svg>
+                                <div className="contact-modal-item-text">
+                                    <span className="contact-modal-label">Call Us</span>
+                                    <span className="contact-modal-value">{CONTACT.phone}</span>
+                                </div>
+                            </a>
+                            <a href={CONTACT.smsHref} className="contact-modal-item">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                                </svg>
+                                <div className="contact-modal-item-text">
+                                    <span className="contact-modal-label">Text Us</span>
+                                    <span className="contact-modal-value">{CONTACT.phone}</span>
+                                </div>
+                            </a>
+                            <a href={`mailto:${CONTACT.email}`} className="contact-modal-item">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                    <polyline points="22,6 12,13 2,6" />
+                                </svg>
+                                <div className="contact-modal-item-text">
+                                    <span className="contact-modal-label">Email</span>
+                                    <span className="contact-modal-value">{CONTACT.email}</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

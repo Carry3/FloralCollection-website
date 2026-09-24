@@ -3,7 +3,7 @@
    ═══════════════════════════════════════════════════ */
 :root {
   /* Typography */
-  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-heading: 'Cormorant', Georgia, serif;
   --font-body: 'Inter', -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
@@ -41,37 +41,53 @@
   --header-height: 72px;
 }
 
+/* ─── Signature Color Palette（客户指定）─── */
+:root {
+  --palette-porcelain-white: #F8F6F5;
+  --palette-soft-pearl: #F2ECE9;
+  --palette-petal-mist: #EBE7E5;
+  --palette-blush-linen: #E2DBD6;
+  --palette-champagne-beige: #D1C6B8;
+  --palette-almond-taupe: #C5BAAC;
+  --palette-warm-stone: #B1A79A;
+  --palette-mocha-taupe: #948A77;
+}
+
 /* ─── Light Theme ─── */
 [data-theme='light'] {
-  --bg-primary: #fafaf7;
-  --bg-secondary: #f3f1ec;
+  --bg-primary: var(--palette-porcelain-white);
+  --bg-secondary: var(--palette-soft-pearl);
   --bg-elevated: #ffffff;
-  --bg-inverse: #0a0a0a;
-  --bg-brand: #1a1a2e;
+  --bg-inverse: #4a4238;
+  /* 开屏 / 幕布颜色 */
+  --bg-brand: var(--palette-soft-pearl);
+  --brand-loading-fg: var(--accent);
 
-  --text-primary: #1a1a1a;
-  --text-secondary: #6b6b6b;
-  --text-tertiary: #999999;
-  --text-inverse: #fafafa;
+  /* 文字：调色板里最深的 Mocha Taupe 在浅底上对比度不足以做正文，
+     因此正文用同色系加深的暖棕 */
+  --text-primary: #4a4238;
+  --text-secondary: #6f6559;
+  --text-tertiary: var(--palette-mocha-taupe);
+  --text-inverse: var(--palette-porcelain-white);
   --text-on-image: #ffffff;
 
-  --accent: #c9a96e;
-  --accent-hover: #b8893d;
-  --accent-subtle: rgba(201, 169, 110, 0.08);
-  --accent-text-safe: #8a7340;
+  --accent: var(--palette-mocha-taupe);
+  --accent-hover: #7e7563;
+  --accent-subtle: rgba(148, 138, 119, 0.1);
+  --accent-text-safe: #7a705e;
 
-  --border-default: #e0e0e0;
-  --border-subtle: #f0f0f0;
-  --border-strong: #cccccc;
+  --border-default: var(--palette-blush-linen);
+  --border-subtle: var(--palette-petal-mist);
+  --border-strong: var(--palette-champagne-beige);
 
-  --overlay-glass: rgba(250, 250, 247, 0.88);
-  --overlay-light: rgba(0, 0, 0, 0.3);
-  --overlay-medium: rgba(0, 0, 0, 0.5);
+  --overlay-glass: rgba(248, 246, 245, 0.88);
+  --overlay-light: rgba(74, 66, 56, 0.3);
+  --overlay-medium: rgba(74, 66, 56, 0.5);
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.16);
+  --shadow-sm: 0 1px 3px rgba(74, 66, 56, 0.06);
+  --shadow-md: 0 4px 12px rgba(74, 66, 56, 0.08);
+  --shadow-lg: 0 8px 24px rgba(74, 66, 56, 0.12);
+  --shadow-xl: 0 16px 48px rgba(74, 66, 56, 0.16);
 }
 
 /* ─── Dark Theme ─── */
